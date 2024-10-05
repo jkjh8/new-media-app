@@ -1,15 +1,10 @@
+<script setup>
+import Video from 'src/components/Video.vue'
+import Photo from 'src/components/Photo.vue'
+import Logo from 'src/components/Logo.vue'
+</script>
 <template>
-  <q-page class="flex flex-center">
-    <img
-      alt="Quasar logo"
-      src="~assets/quasar-logo-vertical.svg"
-      style="width: 200px; height: 200px"
-    >
+  <q-page padding>
+    <Logo />
   </q-page>
 </template>
-
-<script setup>
-defineOptions({
-  name: 'IndexPage'
-});
-</script>
