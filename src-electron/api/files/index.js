@@ -2,10 +2,14 @@ import { app } from 'electron'
 import path from 'path'
 import fs from 'fs'
 import ffmpeg from 'fluent-ffmpeg'
+import sizeOf from 'image-size'
 import logger from 'src-electron/logger'
 import db from 'src-electron/db'
+
 import { fnCheckType } from './fnCheckType'
-import sizeOf from 'image-size'
+import { fnCreateFolderIfNot } from './fnCreateFolderIfNot'
+import { fnDeleteDbFiles } from './fnDeleteDbFiles'
+import { fnUpdateMetaData } from './fnUpdateMetaData'
 
 ffmpeg.setFfmpegPath(require('ffmpeg-static').replace('app.asar', 'app.asar.unpacked'))
 ffmpeg.setFfprobePath(require('ffprobe-static').path.replace('app.asar', 'app.asar.unpacked'))
@@ -14,17 +18,10 @@ const HomePath = app.getPath('home')
 const MediaPath = path.join(HomePath, 'Media')
 const FilesPath = path.join(MediaPath, 'Files')
 
-const fnCreateFolderIfNotExists = (folderPath, folderName) => {
-  if (!fs.existsSync(folderPath)) {
-    fs.mkdirSync(folderPath)
-  }
-  logger.info(`${folderName}: ${folderPath}`)
-}
-
 const fnInitFolders = () => {
   try {
-    fnCreateFolderIfNotExists(MediaPath, 'MediaPath')
-    fnCreateFolderIfNotExists(FilesPath, 'FilesPath')
+    fnCreateFolderIfNot(MediaPath, 'MediaPath')
+    fnCreateFolderIfNot(FilesPath, 'FilesPath')
   } catch (error) {
     logger.error(`Init folders Error: ${error}`)
   }
@@ -33,6 +30,7 @@ const fnInitFolders = () => {
 const fnInitFiles = async () => {
   try {
     const files = fs.readdirSync(FilesPath)
+    await fnDeleteDbFiles(files)
     for (const file of files) {
       const fullpath = path.join(FilesPath, file)
       const parsed = path.parse(fullpath)
@@ -54,16 +52,6 @@ const fnInitFiles = async () => {
   } catch (error) {
     logger.error(`Init files Error: ${error}`)
   }
-}
-
-const fnUpdateMetaData = (file) => {
-  ffmpeg.ffprobe(file.path.fullpath, async (err, meta) => {
-    if (err) {
-      return logger.error(`ffprobe Error: ${err}`)
-    } else {
-      return await db.files.update({ file: file.file }, { $set: { meta } }, { upsert: true })
-    }
-  })
 }
 
 export { HomePath, MediaPath, FilesPath, fnInitFolders, fnInitFiles }
