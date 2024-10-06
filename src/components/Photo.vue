@@ -1,7 +1,9 @@
-<script setup></script>
+<script setup>
+const props = defineProps(['imgFile'])
+</script>
 
 <template>
-  <div class="text-h6">Photo</div>
+  <q-img :src="imgFile" />
 </template>
 
 <style scoped></style>

@@ -8,6 +8,9 @@ import { fnInitDB } from './db'
 import { fnInitFolders } from './api/files'
 import { fnInitFiles } from './api/files'
 import { fnInitIPC } from './ipc'
+import fileProtocal from './api/protocol/file'
+
+process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
 // needed in case process is undefined under Linux
 const platform = process.platform || os.platform()
 
@@ -23,30 +26,42 @@ function createWindow() {
    */
   mainWindow = new BrowserWindow({
     icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
-    width: 1000,
-    height: 600,
+    width: 1920,
+    height: 1080,
     useContentSize: true,
     webPreferences: {
       contextIsolation: true,
-      // More info: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/electron-preload-script
+      sandbox: true,
       preload: path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD)
     }
   })
 
   mainWindow.loadURL(process.env.APP_URL)
 
-  // if (process.env.DEBUGGING) {
-  //   // if on DEV or Production with debug enabled
-  //   mainWindow.webContents.openDevTools()
-  // } else {
-  //   // we're on production; no access to devtools pls
-  //   mainWindow.webContents.on('devtools-opened', () => {
-  //     mainWindow.webContents.closeDevTools()
-  //   })
-  // }
+  if (process.env.DEBUGGING) {
+    // if on DEV or Production with debug enabled
+    mainWindow.webContents.openDevTools()
+  } else {
+    // we're on production; no access to devtools pls
+    mainWindow.webContents.on('devtools-opened', () => {
+      mainWindow.webContents.closeDevTools()
+    })
+  }
 
   mainWindow.on('closed', () => {
     mainWindow = null
+  })
+
+  mainWindow.on('enter-full-screen', () => {
+    if (platform !== 'darwin') {
+      mainWindow.setMenuBarVisibility(false)
+    }
+  })
+
+  mainWindow.on('leave-full-screen', () => {
+    if (platform !== 'darwin') {
+      mainWindow.setMenuBarVisibility(true)
+    }
   })
   // initialize the IPC
   fnInitIPC()
@@ -55,6 +70,9 @@ function createWindow() {
 }
 
 app.whenReady().then(async () => {
+  // set file protocol
+  fileProtocal()
+  // install Vue Devtools
   if (process.env.DEBUGGING) {
     try {
       await installExtension(VUEJS_DEVTOOLS)
@@ -73,7 +91,7 @@ app.on('window-all-closed', () => {
 })
 
 app.on('activate', () => {
-  if (mainWindow === null) {
+  if (BrowserWindow.getAllWindows().length === 0) {
     createWindow()
   }
 })

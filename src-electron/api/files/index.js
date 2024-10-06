@@ -17,11 +17,13 @@ ffmpeg.setFfprobePath(require('ffprobe-static').path.replace('app.asar', 'app.as
 const HomePath = app.getPath('home')
 const MediaPath = path.join(HomePath, 'Media')
 const FilesPath = path.join(MediaPath, 'Files')
+const LogoPath = path.join(MediaPath, 'Logo')
 
 const fnInitFolders = () => {
   try {
     fnCreateFolderIfNot(MediaPath, 'MediaPath')
     fnCreateFolderIfNot(FilesPath, 'FilesPath')
+    fnCreateFolderIfNot(LogoPath, 'LogoPath')
   } catch (error) {
     logger.error(`Init folders Error: ${error}`)
   }
