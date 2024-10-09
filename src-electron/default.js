@@ -5,9 +5,11 @@ export default defaultValue = {
   audioDevices: [],
   audioDevice: 'default',
   video: {
-    readyState: 0
+    readyState: 0,
+    state: ''
   },
   audio: {
-    readyState: 0
+    readyState: 0,
+    state: ''
   }
 }
