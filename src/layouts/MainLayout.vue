@@ -4,11 +4,18 @@ import { useQuasar } from 'quasar'
 import { useFilesStore } from 'src/stores/files'
 import { useSetupStore } from 'src/stores/setup'
 import { storeToRefs } from 'pinia'
+// composables
+import { useSetup } from 'src/composables/useSetup'
+import { usePlayer } from 'src/composables/usePlayer'
 
 const $q = useQuasar()
 const { setup } = storeToRefs(useSetupStore())
+const { fnInitPlayerFuntions } = usePlayer()
+const { fnInitSetupFuntions, fnCheckTheme } = useSetup()
 
 onMounted(() => {
+  fnInitPlayerFuntions()
+  fnInitSetupFuntions()
   API.receive('files', (data) => {
     useFilesStore().fnUpdateFiles(data)
   })
@@ -17,7 +24,7 @@ onMounted(() => {
 
 onBeforeMount(async () => {
   useSetupStore().fnUpdateSetup(await API.invoke('getSetup'))
-  $q.dark.set(setup.value.mode === 'dark' ? true : false)
+  fnCheckTheme()
 })
 </script>
 <template>

@@ -13,7 +13,7 @@ onMounted(() => {
     console.log('Audio device set to', setup.value.audioDevice)
   }
   vp.value.src = 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
-  vp.value.play()
+  // vp.value.play()
 })
 </script>
 

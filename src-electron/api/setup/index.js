@@ -9,6 +9,8 @@ const fnInitDefault = async () => {
         defaultValue[doc.key] = doc.value
       }
     }
+    console.log(defaultValue)
+    console.log('Init default setup')
   } catch (error) {
     console.error(`Init default Error: ${error}`)
   }

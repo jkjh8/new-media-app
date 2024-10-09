@@ -24,10 +24,10 @@ onMounted(() => {
 </script>
 <template>
   <q-page>
-    <Logo v-if="setup.view === 'logo'" />
-    <Video v-show="setup.view === 'video'" />
-    <Photo v-show="setup.view === 'photo'" />
-    <audio ref="ap" controls />
+    <Logo v-if="setup.mode === 'logo'" />
+    <Video v-show="setup.mode === 'video'" />
+    <Photo v-show="setup.mode === 'photo'" />
+    <audio ref="ap" />
   </q-page>
 </template>
 

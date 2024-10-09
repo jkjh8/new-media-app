@@ -8,7 +8,10 @@ import { fnInitDB } from './db'
 import { fnInitFolders } from './api/files'
 import { fnInitFiles } from './api/files'
 import { fnInitIPC } from './ipc'
+import { fnInitDefault } from './api/setup'
 import fileProtocal from './api/protocol/file'
+
+import { fnInitUdpServer } from './api/udp'
 
 process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
 // needed in case process is undefined under Linux
@@ -19,6 +22,8 @@ let mainWindow
 fnInitDB()
 // initialize the folders
 fnInitFolders()
+// initialize the default values
+fnInitDefault()
 
 function createWindow() {
   /**
@@ -67,6 +72,8 @@ function createWindow() {
   fnInitIPC()
   // initialize the files
   fnInitFiles()
+  // initialize the UDP server
+  fnInitUdpServer(41234)
 }
 
 app.whenReady().then(async () => {
