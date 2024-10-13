@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, onBeforeMount } from 'vue'
 import { useSetupStore } from 'src/stores/setup'
 import { useAudioStore } from 'src/stores/audio'
 import { useVideoStore } from 'src/stores/video'
@@ -9,13 +9,18 @@ import { useCallback } from 'src/composables/useCallback'
 import Video from 'src/components/Video.vue'
 import Photo from 'src/components/Photo.vue'
 import Logo from 'src/components/Logo.vue'
+import { fn } from 'moment'
 
 const { setup } = storeToRefs(useSetupStore())
-const { ap } = storeToRefs(useAudioStore())
+const { ap, aps } = storeToRefs(useAudioStore())
 const { vp } = storeToRefs(useVideoStore())
 const { fnSetCallback } = useCallback()
 
 onMounted(() => {
+  for (let i = 0; i < aps.value.length; i++) {
+    let audio = new Audio()
+    aps.value[i] = audio
+  }
   fnSetCallback(ap.value, 'audio')
   fnSetCallback(vp.value, 'video')
   useSetupStore().fnGetAudioDevices()
